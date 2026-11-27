@@ -1,20 +1,10 @@
-"use client";
-
-import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, House, Sparkles } from "lucide-react";
+import {  House, Sparkles } from "lucide-react";
 import { AuthIllustrationPanel } from "@/src/components/auth/auth-illustration-panel";
-import { AuthTextField } from "@/src/components/auth/auth-text-field";
-import { Button } from "@/src/components/ui/button";
+import LoginForm from "./_component/login-form";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState("");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setMessage("Sign-in isn’t connected yet. Your details haven’t been sent.");
-  }
 
   return (
     <main className="mx-auto grid min-h-screen w-full max-w-360 grid-cols-1 gap-8 px-5 py-5 sm:px-8 sm:py-8 lg:h-dvh lg:min-h-0 lg:grid-cols-[1fr_0.95fr] lg:gap-10 lg:overflow-hidden lg:px-12 lg:py-8">
@@ -47,76 +37,7 @@ export default function LoginPage() {
               Sign in to pick up where you left off and make yourself at home.
             </p>
 
-            <form className="mt-9 space-y-5" onSubmit={handleSubmit}>
-              <AuthTextField
-                id="email"
-                name="email"
-                label="Email address"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                required
-              />
-              <div className="space-y-2">
-                <div className="flex items-center justify-between gap-3">
-                  <label htmlFor="password" className="text-sm font-medium text-[#2c4439]">
-                    Password
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setMessage("Password reset isn’t available yet.")}
-                    className="rounded text-sm font-medium text-[#66846c] transition hover:text-[#294b39] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#739477]"
-                  >
-                    Forgot password?
-                  </button>
-                </div>
-                <div className="relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    placeholder="Enter your password"
-                    required
-                    className="h-13.5 w-full rounded-xl border border-[#dfe5dc] bg-white/85 px-4 pr-12 text-[0.95rem] text-[#18372e] shadow-[0_2px_8px_rgb(24_55_46/3%)] outline-none transition placeholder:text-[#a7b0a8] hover:border-[#bdcdbd] focus:border-[#739477] focus:ring-4 focus:ring-[#739477]/15"
-                  />
-                  <button
-                    type="button"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    aria-pressed={showPassword}
-                    onClick={() => setShowPassword((visible) => !visible)}
-                    className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-xl text-[#87948a] transition hover:text-[#385a46] focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#739477]"
-                  >
-                    {showPassword ? (
-                      <EyeOff aria-hidden="true" className="size-4.5" />
-                    ) : (
-                      <Eye aria-hidden="true" className="size-4.5" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <label className="flex w-fit cursor-pointer items-center gap-2.5 py-1 text-sm text-[#69776e]">
-                <input
-                  name="remember"
-                  type="checkbox"
-                  className="size-4 rounded border-[#cbd6ca] accent-[#315d45] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#739477]"
-                />
-                Keep me signed in
-              </label>
-              <Button
-                type="submit"
-                className="h-13.5 w-full rounded-xl bg-[#234b3b] text-[0.95rem] font-semibold text-white shadow-[0_8px_18px_rgb(35_75_59/16%)] transition hover:bg-[#183d2e]"
-              >
-                Sign in <ArrowRight aria-hidden="true" className="ml-1 size-4" />
-              </Button>
-              <p
-                aria-live="polite"
-                className="flex h-10 items-center justify-center px-2 text-center text-sm leading-5 text-[#718078]"
-              >
-                {message}
-              </p>
-            </form>
+            <LoginForm/>
 
             <div className="mt-7 flex items-center gap-4 text-xs text-[#a0aaa1]">
               <span className="h-px flex-1 bg-[#e2e8df]" />
