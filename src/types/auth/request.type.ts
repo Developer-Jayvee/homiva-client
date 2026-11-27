@@ -12,7 +12,8 @@ export const registerSchema = z.object({
     last_name: z.string().min(1, "Last name is required").max(255),
     address: z.string().min(1, "Address is required"),
     contact_no: z.string().min(1, "Contact number is required"),
-
+    email: z.email(),
+    
     organization : z.object({
         name: z.string().min(1, "Organization name is required").max(255),
         address: z.string().min(1, "Address is required"),

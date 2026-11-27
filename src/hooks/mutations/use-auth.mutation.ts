@@ -17,6 +17,9 @@ export function useLoginMutation() {
 export function useRegisterMutation() {
     return useMutation({
         mutationKey: ['register'],
-        mutationFn: (data: RegisterFormData) => authService.register(data)
+        mutationFn: async (data: RegisterFormData) => {
+            await authService.getCsrfCookie()
+            return authService.register(data)
+        }
     })
 }
