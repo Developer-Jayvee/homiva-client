@@ -280,13 +280,6 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
                   <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-[#c58360] ring-2 ring-white" />
                 </Button>
                 <Button
-                  className="hidden bg-[#315d43] text-white hover:bg-[#244a38] sm:inline-flex"
-                  size="default"
-                >
-                  <Plus />
-                  Add property
-                </Button>
-                <Button
                   aria-label="Add property"
                   className="bg-[#315d43] text-white hover:bg-[#244a38] sm:hidden"
                   size="icon"
