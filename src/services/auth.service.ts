@@ -18,6 +18,11 @@ export const authService = {
         const response = await api.post('v1/auth/register',data);
         return response?.data;
     },
+
+    verify_me: async () => {
+        const response = await api.get('v1/me');
+        return response?.data
+    }
 }
 
 export const authOtpService = {
