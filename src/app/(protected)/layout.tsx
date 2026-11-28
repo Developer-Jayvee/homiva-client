@@ -2,7 +2,8 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Bell,
   Building2,
@@ -11,6 +12,7 @@ import {
   ClipboardList,
   House,
   LayoutDashboard,
+  LogOut,
   Menu,
   MessageSquare,
   Plus,
@@ -19,7 +21,17 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
+import {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/src/components/ui/popover";
+import { authService } from "@/src/services/auth.service";
 import VerifyUser from "./_components/verifiy-user";
+import { useLogoutMutation } from "@/src/hooks/mutations/use-auth.mutation";
 
 const navigation = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -36,8 +48,27 @@ const navigation = [
 
 export default function ProtectedLayout({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
   const pathname = usePathname();
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const activeItem = navigation.find(({ href }) => pathname.startsWith(href));
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    setLogoutError("");
+
+    try {
+      await authService.logout();
+      queryClient.clear();
+      router.replace("/login");
+    } catch {
+      setLogoutError("Unable to log out. Please try again.");
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <VerifyUser>
@@ -148,29 +179,63 @@ export default function ProtectedLayout({ children }: { children: ReactNode }) {
             <div
               className={`mt-auto border-t border-[#eef0ea] p-4 ${collapsed ? "flex justify-center" : ""}`}
             >
-              <div
-                className={`flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}
-              >
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#e8eee5] text-sm font-semibold text-[#45634a]">
-                  AM
-                </div>
-                {!collapsed && (
-                  <>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">
-                        Alex Morgan
-                      </p>
-                      <p className="truncate text-xs text-[#8b978c]">
-                        Property owner
-                      </p>
-                    </div>
-                    <ChevronDown
-                      aria-hidden="true"
-                      className="size-4 text-[#8b978c]"
-                    />
-                  </>
-                )}
-              </div>
+              <Popover open={logoutOpen} onOpenChange={setLogoutOpen}>
+                <PopoverTrigger
+                  aria-label="Open account menu"
+                  className={`flex w-full items-center gap-3 rounded-xl text-left outline-none transition-colors hover:bg-[#f6f7f3] focus-visible:ring-2 focus-visible:ring-[#739477] ${collapsed ? "justify-center p-1" : "p-2"}`}
+                  onClick={() => setLogoutError("")}
+                >
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#e8eee5] text-sm font-semibold text-[#45634a]">
+                    AM
+                  </span>
+                  {!collapsed && (
+                    <>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-medium">
+                          Alex Morgan
+                        </span>
+                        <span className="block truncate text-xs text-[#8b978c]">
+                          Property owner
+                        </span>
+                      </span>
+                      <ChevronDown
+                        aria-hidden="true"
+                        className="size-4 text-[#8b978c]"
+                      />
+                    </>
+                  )}
+                </PopoverTrigger>
+                <PopoverContent align="start" side="right" className="p-4">
+                  <PopoverTitle className="text-sm font-semibold">
+                    Sign out of Homiva?
+                  </PopoverTitle>
+                  <PopoverDescription className="mt-1 text-xs leading-5 text-[#7c887e]">
+                    You can sign back in at any time.
+                  </PopoverDescription>
+                  {logoutError && (
+                    <p className="mt-3 text-xs text-red-700" role="alert">
+                      {logoutError}
+                    </p>
+                  )}
+                  <div className="mt-4 flex justify-end gap-2">
+                    <PopoverClose
+                      className="inline-flex h-8 items-center justify-center rounded-lg border border-[#e5e9e2] px-3 text-xs font-medium text-[#68766c] transition-colors hover:bg-[#f6f7f3] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#739477]"
+                      disabled={isLoggingOut}
+                    >
+                      Cancel
+                    </PopoverClose>
+                    <Button
+                      className="bg-[#a4473d] text-white hover:bg-[#893a32]"
+                      disabled={isLoggingOut}
+                      onClick={handleLogout}
+                      size="sm"
+                    >
+                      <LogOut aria-hidden="true" />
+                      {isLoggingOut ? "Signing out…" : "Log out"}
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </aside>
 

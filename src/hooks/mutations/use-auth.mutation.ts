@@ -30,3 +30,11 @@ export function useOtpSending() {
         mutationFn: (data: OtpFormDAta) => authOtpService.send(data)
     });
 }
+
+
+export function useLogoutMutation() {
+    return useMutation({
+        mutationKey:['logout'],
+        mutationFn: authService.logout
+    })
+}
