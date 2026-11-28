@@ -36,6 +36,7 @@ export function getApiErrorMessage(
 
 	if (axios.isAxiosError<ApiErrorPayload>(error)) {
 		const response = error.response;
+		
 		if (!response) {
 			return error.code === "ECONNABORTED" || error.code === "ETIMEDOUT"
 				? "The request timed out. Please try again."
@@ -45,12 +46,16 @@ export function getApiErrorMessage(
 		// Avoid exposing internal server messages or details to the client.
 		if (response.status >= 500) return fallbackMessage;
 		payload = response.data;
+
+		
+		
 	} else if (isRecord(error)) {
 		payload = error as ApiErrorPayload;
 	} else {
 		return fallbackMessage;
 	}
 
+	return payload?.message as unknown as string;
 	const validationMessages = getValidationMessages(payload.errors);
 	if (validationMessages.length > 0) return validationMessages.join(" ");
 

@@ -21,6 +21,10 @@ export const registerSchema = z.object({
     })  
 })
 
+export const otpSchema = z.object({
+    otp: z.string().max(6,"Maximum of 6 numbers is required.")
+})
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
-
+export type OtpFormDAta = z.infer<typeof otpSchema>;

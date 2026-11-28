@@ -9,11 +9,13 @@ import { LoginFormData, loginSchema } from "@/src/types/auth/request.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginMutation } from "@/src/hooks/mutations/use-auth.mutation";
 import { getApiErrorMessage } from "@/src/lib/helpers/errors";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const loginMutation = useLoginMutation();
+  const router = useRouter()
 
   const {
     handleSubmit,
@@ -28,9 +30,12 @@ export default function LoginForm() {
     try {
       const response = await loginMutation.mutateAsync(data);
 
+      
       if (response?.status === false || response?.error) {
         setMessage(getApiErrorMessage(response));
       }
+
+      return router.replace('otp')
     } catch (error) {
       setMessage(getApiErrorMessage(error));
     }

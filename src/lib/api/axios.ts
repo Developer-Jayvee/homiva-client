@@ -8,7 +8,6 @@ const api = axios.create({
 
     headers: {
         'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
     },
     timeout: 5000
 })
@@ -18,10 +17,9 @@ const web = axios.create({
     baseURL: baseURL ,
     withCredentials: true,
     withXSRFToken: true,
-
+    
     headers: {
         'Content-Type' : 'application/json',
-        'Accept' : 'application/json',
     },
     timeout: 5000
 })
