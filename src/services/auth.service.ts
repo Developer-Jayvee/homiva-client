@@ -22,11 +22,11 @@ export const authService = {
 
 export const authOtpService = {
     eligibility: async (): Promise<ResponseFormData> => {
-        const response = await api.get('otp/eligibility');
+        const response = await api.get('v1/auth/otp/eligibility');
         return response?.data
     },
     send : async (data: OtpFormDAta): Promise<ResponseFormData> => {
-        const response = await api.post('otp/send',data);
+        const response = await api.post('v1/auth/otp/send',data);
         return response?.data;
     }
 }
