@@ -5,13 +5,21 @@ import { ArrowRight, House, ShieldCheck, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/src/components/ui/button";
 import { AuthIllustrationPanel } from "@/src/components/auth/auth-illustration-panel";
+import { useForm } from "react-hook-form";
+import { OtpFormDAta, otpSchema } from "@/src/types/auth/request.type";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useOtpSending } from "@/src/hooks/mutations/use-auth.mutation";
+import { getApiErrorMessage, getApiErrorStatusCode } from "@/src/lib/helpers/errors";
+import { useRouter } from "next/navigation";
 
 export default function OtpPage() {
   const [digits, setDigits] = useState<string[]>(Array(6).fill(""));
   const [message, setMessage] = useState("");
   const [seconds, setSeconds] = useState(30);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
-
+  const otpSendingMutation = useOtpSending(); 
+  const { handleSubmit , formState: { errors }} = useForm<OtpFormDAta>({ resolver: zodResolver(otpSchema) });
+  const router = useRouter();
   useEffect(() => {
     inputRefs.current[0]?.focus();
   }, []);
@@ -83,14 +91,27 @@ export default function OtpPage() {
     setSeconds(30);
   };
 
-  const verifyCode = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (digits.some((digit) => !digit)) {
-      setMessage("Please enter all 6 digits.");
-      return;
+  const verifyCode =  async (data: OtpFormDAta) => {
+    try {
+      
+      if (digits.some((digit) => !digit)) {
+        setMessage("Please enter all 6 digits.");
+        return;
+      }
+      
+      const response = await otpSendingMutation.mutateAsync({ otp: digits.join("") });
+      
+      if(response.status) {
+        router.replace('dashboard');
+      }
+    } catch (error) {
+      const statusCode = getApiErrorStatusCode(error);
+      if(statusCode == 404 || statusCode == 409) {
+        router.replace('login');
+      } 
+      
+      setMessage(getApiErrorMessage(error));
     }
-
     setMessage("");
   };
 
@@ -126,7 +147,7 @@ export default function OtpPage() {
               Enter the 6-digit code we sent to keep your Homiva account secure.
             </p>
 
-            <form className="mt-9 space-y-5" onSubmit={verifyCode}>
+            <form className="mt-9 space-y-5" onSubmit={handleSubmit(verifyCode)}>
               <fieldset>
                 <legend className="mb-3 text-sm font-medium text-[#2c4439]">
                   Verification code

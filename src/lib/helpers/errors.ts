@@ -12,6 +12,20 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+/** Returns the HTTP status code from an API/request error, if available. */
+export function getApiErrorStatusCode(error: unknown): number | undefined {
+	if (axios.isAxiosError(error)) {
+		return error.response?.status;
+	}
+
+	if (!isRecord(error) || !isRecord(error.response)) {
+		return undefined;
+	}
+
+	const { status } = error.response;
+	return typeof status === "number" ? status : undefined;
+}
+
 function getValidationMessages(errors: unknown): string[] {
 	if (!isRecord(errors)) return [];
 
@@ -54,7 +68,7 @@ export function getApiErrorMessage(
 	} else {
 		return fallbackMessage;
 	}
-
+	
 	return payload?.message as unknown as string;
 	const validationMessages = getValidationMessages(payload.errors);
 	if (validationMessages.length > 0) return validationMessages.join(" ");

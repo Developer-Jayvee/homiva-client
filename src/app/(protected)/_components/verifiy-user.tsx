@@ -22,5 +22,5 @@ export default function VerifyUser({
         return null;
     }
 
-    return <>children</>;
+    return <>{children}</>;
 }

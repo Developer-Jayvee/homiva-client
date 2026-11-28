@@ -1,5 +1,5 @@
-import { authService } from "@/src/services/auth.service";
-import { LoginFormData, RegisterFormData } from "@/src/types/auth/request.type";
+import { authOtpService, authService } from "@/src/services/auth.service";
+import { LoginFormData, OtpFormDAta, RegisterFormData } from "@/src/types/auth/request.type";
 import { useMutation } from "@tanstack/react-query";
 
 
@@ -22,4 +22,11 @@ export function useRegisterMutation() {
             return authService.register(data)
         }
     })
+}
+
+export function useOtpSending() {
+    return useMutation({
+        mutationKey: ['otp-sending'],
+        mutationFn: (data: OtpFormDAta) => authOtpService.send(data)
+    });
 }
